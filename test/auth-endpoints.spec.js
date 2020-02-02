@@ -40,7 +40,6 @@ describe('Auth Endpoints', function () {
 
       it(`responds with 400 required error when '${field}' is missing`, () => {
         delete loginAttemptBody[field]
-
         return supertest(app)
           .post('/api/auth/token')
           .send(loginAttemptBody)
@@ -93,10 +92,8 @@ describe('Auth Endpoints', function () {
    * @description Refresh token
    **/
   describe(`PATCH /api/auth/token`, () => {
-    console.log('db is', db);
     beforeEach('insert users', () =>
       helpers.seedUsers(
-
         db,
         testUsers,
       )
