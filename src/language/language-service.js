@@ -44,6 +44,20 @@ const LanguageService = {
       )
       .where({ 'id', wordId });
   }
+
+  getTotalScore(db, userId){
+    return db
+      .from("language")
+      .select(
+        "language.id",
+        "language.name",
+        "language.user_id",
+        "language.head",
+        "language.total_score"
+      )
+      .where("language.user_id", userId)
+  }
+
 };
 
 module.exports = LanguageService;
