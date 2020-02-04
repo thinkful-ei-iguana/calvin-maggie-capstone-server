@@ -17,7 +17,7 @@ const LanguageService = {
     return db
       .from("word")
       .select(
-        "id",
+        "word.id",
         "language_id",
         "original",
         "translation",
@@ -29,34 +29,43 @@ const LanguageService = {
       .where({ language_id });
   },
 
-  getCurrentWord(db, wordId) {
-    return db
-      .from("word")
-      .select(
-        "id",
-        "language_id",
-        "original",
-        "translation",
-        "next",
-        "memory_value",
-        "correct_count",
-        "incorrect_count"
-      )
-      .where("id", wordId);
-  },
-
-  getTotalScore(db, userId) {
+  getWord(db, language_id) {
     return db
       .from("language")
+      .join("word", { "word.language_id": "language.id"})
       .select(
-        "language.id",
-        "language.name",
-        "language.user_id",
-        "language.head",
-        "language.total_score"
+        "word.id",
+        "word.language_id",
+        "word.original",
+        "word.translation",
+        "word.next",
+        "word.memory_value",
+        "word.correct_count",
+        "word.incorrect_count",
+        "language.total_score",
+        "language.user_id"
       )
-      .where("language.user_id", userId);
+      .where("language.id", language_id);
+  },
+
+  postGuess(db, guess) {
+    return db
+      .from("word")
+      .select
   }
+
+  // getTotalScore(db, userId) {
+  //   return db
+  //     .from("language")
+  //     .select(
+  //       "language.id",
+  //       "language.name",
+  //       "language.user_id",
+  //       "language.head",
+  //       "language.total_score"
+  //     )
+  //     .where("language.user_id", userId);
+  // }
 };
 
 module.exports = LanguageService;
