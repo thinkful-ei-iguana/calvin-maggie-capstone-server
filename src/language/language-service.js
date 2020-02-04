@@ -27,7 +27,7 @@ const LanguageService = {
         "incorrect_count"
       )
       .where({ language_id });
-  }
+  },
 
   getCurrentWord(db, wordId) {
     return db
@@ -42,10 +42,10 @@ const LanguageService = {
         "correct_count",
         "incorrect_count"
       )
-      .where({ 'id', wordId });
-  }
+      .where("id", wordId);
+  },
 
-  getTotalScore(db, userId){
+  getTotalScore(db, userId) {
     return db
       .from("language")
       .select(
@@ -55,9 +55,8 @@ const LanguageService = {
         "language.head",
         "language.total_score"
       )
-      .where("language.user_id", userId)
+      .where("language.user_id", userId);
   }
-
 };
 
 module.exports = LanguageService;
