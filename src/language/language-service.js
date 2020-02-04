@@ -28,6 +28,22 @@ const LanguageService = {
       )
       .where({ language_id });
   }
+
+  getCurrentWord(db, wordId) {
+    return db
+      .from("word")
+      .select(
+        "id",
+        "language_id",
+        "original",
+        "translation",
+        "next",
+        "memory_value",
+        "correct_count",
+        "incorrect_count"
+      )
+      .where({ 'id', wordId });
+  }
 };
 
 module.exports = LanguageService;

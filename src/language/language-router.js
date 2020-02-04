@@ -4,7 +4,9 @@ const { requireAuth } = require("../middleware/jwt-auth");
 
 const languageRouter = express.Router();
 
-languageRouter.use(requireAuth).use(async (req, res, next) => {
+languageRouter
+  .use(requireAuth)
+  .use(async (req, res, next) => {
   try {
     const language = await LanguageService.getUsersLanguage(
       req.app.get("db"),
@@ -23,7 +25,8 @@ languageRouter.use(requireAuth).use(async (req, res, next) => {
   }
 });
 
-languageRouter.get("/", async (req, res, next) => {
+languageRouter
+  .get("/", async (req, res, next) => {
   try {
     const words = await LanguageService.getLanguageWords(
       req.app.get("db"),
@@ -40,23 +43,30 @@ languageRouter.get("/", async (req, res, next) => {
   }
 });
 
-languageRouter.get("/head", async (req, res, next) => {
-  try {
-    const words = await LanguageService.getLanguageWords(
-      req.app.get("db"),
-      req.language.id
-    );
-    res.send({
-      language: req.language,
-      words
-    });
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+languageRouter
+  .get('/head', async (req, res, next) => {
+    try {
+      console.log('req body is', req.body);
+      // need to supply next word id
+      const wordData = await LanguageService.getNextWord(
+        req.app.get('db'),
 
-languageRouter.post("/guess", async (req, res, next) => {
+      );
+
+      const totalScore = await LanguageService.getTotalScore(
+        req.app.get('db'),
+        userId  // need to supply this
+      );
+    }
+      res.json({
+        nextWord: wordData.next,
+        correctCount: wordData.correct_count,
+        incorrectCount: wordData.incorrect_count,
+        totalScore})
+  })
+
+languageRouter
+  .post("/guess", async (req, res, next) => {
   try {
     const words = await LanguageService.getLanguageWords(
       req.app.get("db"),
