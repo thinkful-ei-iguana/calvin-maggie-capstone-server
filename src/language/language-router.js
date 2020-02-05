@@ -1,6 +1,7 @@
 const express = require("express");
 const LanguageService = require("./language-service");
 const { requireAuth } = require("../middleware/jwt-auth");
+const LinkedList = require("./linked-list");
 
 const languageRouter = express.Router();
 const jsonParser = express.json();
@@ -70,15 +71,25 @@ languageRouter
 languageRouter
   .post("/guess", jsonParser, async (req, res, next) => {
   try {
-    console.log('req.body is', req.body); 
+
+    let userProgressLL = new LinkedList();
+    const wordData = await LanguageService.getLanguageWords(
+      req.app.get("db"),
+      req.language.id
+    );
+    wordData.map(word => {userProgressLL.insertLast(word)})
+    userProgressLL.displayList(userProgressLL)
+    
     // sucessfully getting the query!
     // let guess = req.query.q;
     let {guess, currentWord} = req.body;
     let guessData = {guess, currentWord}
+    // let {translation, memory_value} = userProgressLL.head
     let correctTranslation = await LanguageService.getResults(
       req.app.get("db"),
       guessData.currentWord
     )
+    // if(guess.toLowerCase() === translation.toLowerCase()) {
     if(guess.toLowerCase() === correctTranslation[0].translation.toLowerCase()) {
       console.log('a correct translation');
     // console.log('correct userid is', correctTranslation[0].user_id);
@@ -87,7 +98,8 @@ languageRouter
         correctTranslation[0].user_id
       );
       let updatedCorrect = updatedScore.and._single.update.correct_count;
-      let updatedTotal = updatedScore.and._single.update.correct_count;
+      let updatedTotal = updatedScore.and._single.update.total_score;
+      let updatedMemVal = updatedScore.and._single.update.memory_value;
       res.send({
         isCorrect: true,
         correctCount: updatedCorrect,
@@ -101,6 +113,8 @@ languageRouter
         correctTranslation[0].user_id
       );
       let updatedIncorrect = updatedScore.and._single.update.incorrect_count;
+      let updatedMemVal = updatedScore.and._single.update.memory_value;
+
       res.send({
         isCorrect: false,
         incorrectCount: updatedIncorrect

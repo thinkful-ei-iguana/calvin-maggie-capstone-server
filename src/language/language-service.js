@@ -63,47 +63,30 @@ const LanguageService = {
         )
       .where("word.original", currentWord)
   },
-  updateCorrectCount(db, user_id) {
+  updateCorrectCount(db, word_id, memory_value) {
     return db
-      .from("language")
-      .join("word", { "word.language_id": "language.id"})
-      // .update(
-      //   "word.id",
-      //   "word.language_id",
-      //   "word.memory_value",
-      //   "word.correct_count",
-      //   "language.total_score",
-      //   "language.user_id"
-      //   )
-      .update({
-        correct_count: + 1,
-        total_score: + 1
-      })
+      .from("word")
+      .join("language", {"language.id": "word.language_id"})
+      .update({"correct_count": 1,
+        "total_score": 1,
+        "memory_value": memory_value}
+      )
       .select(
         "word.correct_count",
         "language.total_score"
       )
-      .where("language.user_id", user_id);
+      .where("word.id", word_id);
 },
-updateIncorrectCount(db, user_id) {
+  updateIncorrectCount(db, word_id) {
     return db
-      .from("language")
-      .join("word", { "word.language_id": "language.id"})
-      // .update(
-      //   "word.id",
-      //   "word.language_id",
-      //   "word.memory_value",
-      //   "word.correct_count",
-      //   "language.total_score",
-      //   "language.user_id"
-      //   )
-      .update({
-        incorrect_count: + 1
-      })
+      .from("word")
+      .update({"incorrect_count": 1,
+        "memory_value": memory_value}
+      )
       .select(
         "word.incorrect_count"
       )
-      .where("language.user_id", user_id);
+      .where("word.id", word_id);
 }
   
 };
