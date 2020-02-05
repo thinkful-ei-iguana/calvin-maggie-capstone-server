@@ -116,7 +116,7 @@ const LanguageService = {
       .from("word")
       .update({"correct_count": db.raw("correct_count + 1")}
       )
-      .returning("word.correct_count")
+      .returning("correct_count")
       .where("word.id", word_id);
 },
   updateIncorrectCount(db, word_id) {
@@ -125,7 +125,7 @@ const LanguageService = {
       .update({"incorrect_count": db.raw("incorrect_count + 1")}
       )
       .returning(
-        "word.correct_count",
+        "incorrect_count"
       )
       .where("word.id", word_id);
 }
