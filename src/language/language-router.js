@@ -3,8 +3,11 @@ const LanguageService = require("./language-service");
 const { requireAuth } = require("../middleware/jwt-auth");
 
 const languageRouter = express.Router();
+const jsonParser = express.json();
 
-languageRouter.use(requireAuth).use(async (req, res, next) => {
+languageRouter
+  .use(requireAuth)
+  .use(async (req, res, next) => {
   try {
     const language = await LanguageService.getUsersLanguage(
       req.app.get("db"),
@@ -23,7 +26,8 @@ languageRouter.use(requireAuth).use(async (req, res, next) => {
   }
 });
 
-languageRouter.get("/", async (req, res, next) => {
+languageRouter
+  .get("/", async (req, res, next) => {
   try {
     const words = await LanguageService.getLanguageWords(
       req.app.get("db"),
@@ -40,33 +44,41 @@ languageRouter.get("/", async (req, res, next) => {
   }
 });
 
-languageRouter.get("/head", async (req, res, next) => {
+languageRouter
+  .get("/head", async (req, res, next) => {
   try {
-    console.log("req body is", req.body);
-    // need to supply next word id
-    const wordData = await LanguageService.getNextWord(req.app.get("db"));
-
-    const totalScore = await LanguageService.getTotalScore(
+    console.log('req.language.id', req.language)
+    const wordData = await LanguageService.getWord(
       req.app.get("db"),
-      userId // need to supply this
+      req.language.id
     );
-    res.json({
-      nextWord: wordData.next,
-      correctCount: wordData.correct_count,
-      incorrectCount: wordData.incorrect_count,
-      totalScore
-    });
+
+    const dataResponse = {
+      currentWord: wordData[0].original,
+      nextWord: wordData[0].next,
+      correctCount: wordData[0].correct_count,
+      incorrectCount: wordData[0].incorrect_count,
+      totalScore: wordData[0].total_score
+    }
+    console.log('worddsta', dataResponse);
+    res.send(dataResponse);
   } catch (error) {
     next(error);
   }
 });
 
-languageRouter.post("/guess", async (req, res, next) => {
+languageRouter
+  .post("/guess", async (req, res, next) => {
   try {
-    const words = await LanguageService.getLanguageWords(
-      req.app.get("db"),
-      req.language.id
-    );
+    console.log('req is', req.query.q); // sucessfully getting the query!
+
+    
+    // const words = await LanguageService.getLanguageWords(
+    //   req.app.get("db"),
+    //   req.query.q
+    // );
+
+    // if()
     res.send({
       language: req.language,
       words
