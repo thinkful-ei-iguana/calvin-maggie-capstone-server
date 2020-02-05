@@ -80,12 +80,10 @@ languageRouter
     );
     wordData.map(word => {userProgressLL.insertLast(word)})
     userProgressLL.displayList(userProgressLL)
-    
-    console.log(userProgressLL.head.value.translation);
-  
+      
     let {guess, currentWord} = req.body;
     let guessData = {guess, currentWord}
-    // let {translation, memory_value} = userProgressLL.head
+
     let correctTranslation = await LanguageService.getResults(
       req.app.get("db"),
       guessData.currentWord
@@ -98,8 +96,7 @@ languageRouter
       req.app.get("db"),
       req.language.id,
         req.body.currentWord
-
-  );
+    );
     let getIncorrectCount = await LanguageService.getIncorrectCount(
       req.app.get("db"),
       req.language.id,
@@ -110,13 +107,11 @@ languageRouter
       req.language.id,
       req.body.currentWord
     );
-
-console.log('get total score, correct, incorrect are', getTotalScore, getCorrectCount[0].correct_count, getIncorrectCount[0].incorrect_count)
     
     // if correct guess
     if(guess.toLowerCase() === userProgressLL.head.value.translation.toLowerCase()) {
       console.log('a correct translation');
-    // console.log('correct userid is', correctTranslation[0].user_id);
+   
       let newTotal = req.language.total_score + 1;
       let updatedTotalScore = await LanguageService.updateTotalScore(
         req.app.get("db"),
@@ -136,13 +131,15 @@ console.log('get total score, correct, incorrect are', getTotalScore, getCorrect
         userProgressLL.head.value.id,
         calculateMemVal
       )
-      console.log('update mem val is', updateMemVal);
+      console.log('HOWOWOOWOWJEIFWO', correctTranslation[0].translation);
 
       res.send({
         isCorrect: true,
-        correctCount: updatedCorrect,
-        incorrectCount: getIncorrectCount[0].incorrect_count,
-        totalScore: newTotal
+        wordCorrectCount: getCorrectCount,
+        wordCorrectCount: getIncorrectCount,
+        totalScore: newTotal,
+        answer: correctTranslation[0].translation,
+        nextWord: userProgressLL.head.next.value.original,
       })
     }
 
@@ -164,12 +161,20 @@ console.log('get total score, correct, incorrect are', getTotalScore, getCorrect
         userProgressLL.head.value.id,
         calculateMemVal
       )
+
+      let item = userProgressLL.head.value;
+      let currentSlot = getMemVal[0].memory_value;
+
+
+
       console.log('newtotal incorrect is', newTotal)
       res.send({
         isCorrect: false,
-        correctCount: getCorrectCount[0].correct_count,
-        incorrectCount: updatedIncorrect,
-        totalScore: newTotal
+        wordCorrectCount: getCorrectCount[0].correct_count,
+        wordIncorrectCount: updatedIncorrect,
+        totalScore: newTotal,
+        answer: correctTranslation[0].translation,
+        nextWord: userProgressLL.head.next.value.original,
       })
     }
   }
