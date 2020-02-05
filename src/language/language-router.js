@@ -89,8 +89,31 @@ languageRouter
     let correctTranslation = await LanguageService.getResults(
       req.app.get("db"),
       guessData.currentWord
-    )
+    );
+    let getTotalScore = await LanguageService.getTotalScore(
+      req.app.get("db"),
+      req.language.id,
+    );
+    let getCorrectCount = await LanguageService.getCorrectCount(
+      req.app.get("db"),
+      req.language.id,
+        req.body.currentWord
+
+  );
+    let getIncorrectCount = await LanguageService.getIncorrectCount(
+      req.app.get("db"),
+      req.language.id,
+      req.body.currentWord
+    );
+    let getMemVal = await LanguageService.getMemoryValue(
+      req.app.get("db"),
+      req.language.id,
+      req.body.currentWord
+    );
+
+console.log('get total score, correct, incorrect are', getTotalScore, getCorrectCount[0].correct_count, getIncorrectCount[0].incorrect_count)
     
+    // if correct guess
     if(guess.toLowerCase() === userProgressLL.head.value.translation.toLowerCase()) {
       console.log('a correct translation');
     // console.log('correct userid is', correctTranslation[0].user_id);
@@ -100,40 +123,57 @@ languageRouter
         req.language.id,
         newTotal
       )
-      console.log('newtotal is',newTotal)
 
       let updatedCorrect = await LanguageService.updateCorrectCount(
         req.app.get("db"),
         userProgressLL.head.value.id,
-        userProgressLL.head.value.memory_value,
       );
-            console.log('updated correct is', updatedCorrect);
 
-      // let updatedMemVal = updatedScore
+      let calculateMemVal = getMemVal[0].memory_value * 2;
+      console.log('calc mem val is', calculateMemVal);
+      let updateMemVal = await LanguageService.updateMemoryValue(
+        req.app.get("db"),
+        userProgressLL.head.value.id,
+        calculateMemVal
+      )
+      console.log('update mem val is', updateMemVal);
+
       res.send({
         isCorrect: true,
         correctCount: updatedCorrect,
+        incorrectCount: getIncorrectCount[0].incorrect_count,
         totalScore: newTotal
       })
     }
+
+    // if incorrect guess
     else {
       console.log('not a correct translation');
+      let newTotal = req.language.total_score + 1;
       let updatedScore = await LanguageService.updateIncorrectCount(
         req.app.get("db"),
-        userProgressLL.head.value.id,
-        userProgressLL.head.value.memory_value
-
+        userProgressLL.head.value.id
       );
-      console.log('updated incorrect is', updatedScore);
-      let updatedIncorrect = updatedScore
+      let updatedIncorrect = updatedScore;
+      console.log('updated incorrect is', updatedIncorrect);
       // let updatedMemVal = updatedScore
 
+      let calculateMemVal = 1;
+      let updateMemVal = await LanguageService.updateMemoryValue(
+        req.app.get("db"),
+        userProgressLL.head.value.id,
+        calculateMemVal
+      )
+      console.log('newtotal incorrect is', newTotal)
       res.send({
         isCorrect: false,
-        incorrectCount: updatedIncorrect
+        correctCount: getCorrectCount[0].correct_count,
+        incorrectCount: updatedIncorrect,
+        totalScore: newTotal
       })
     }
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
 });

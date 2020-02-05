@@ -64,9 +64,38 @@ const LanguageService = {
       .where("word.original", currentWord)
   },
 
-  // getTotalScore(db,) {
+  getTotalScore(db, language_id) {
+    return db
+      .from("language")
+      .select("language.total_score")
+      .where("language.id", language_id)
+  },
+  getIncorrectCount(db, language_id, currentWord){
+    return db
+      .from("language")
+      .join("word", { "word.language_id": "language.id"})
+      .select("word.incorrect_count")
+      .where("language.id", language_id) 
+      .where("word.original", currentWord)  
+ 
+  },
+  getCorrectCount(db, language_id, currentWord){
+    return db
+      .from("language")
+      .join("word", { "word.language_id": "language.id"})
+      .select("word.correct_count")
+      .where("language.id", language_id)
+      .where("word.original", currentWord)  
+  },
+  getMemoryValue(db, language_id, currentWord){
+    return db
+      .from("language")
+      .join("word", { "word.language_id": "language.id"})
+      .select("word.memory_value")
+      .where("language.id", language_id)
+      .where("word.original", currentWord)  
+  },
 
-  // },
   updateTotalScore(db, language_id, newTotal) {
     return db
       .from("language")
@@ -74,28 +103,29 @@ const LanguageService = {
       .update({total_score: newTotal})
   },
 
-  updateCorrectCount(db, word_id, memory_value) {
+  updateMemoryValue(db, word_id, new_mem_val){
+    console.log('service word_id and memory value', word_id, new_mem_val);
+    return db ("word")
+      .update({memory_value: new_mem_val})
+      .where("word.id", word_id)  
+      .returning("memory_value")
+  },
+
+  updateCorrectCount(db, word_id) {
     return db
       .from("word")
-      .join("language", {"language.id": "word.language_id"})
-      .update({"correct_count": db.raw("correct_count + 1"),
-        "memory_value": memory_value}
+      .update({"correct_count": db.raw("correct_count + 1")}
       )
-      .select(
-        "word.correct_count",
-        "word.memory_value"
-      )
+      .returning("word.correct_count")
       .where("word.id", word_id);
 },
-  updateIncorrectCount(db, word_id, memory_value) {
+  updateIncorrectCount(db, word_id) {
     return db
       .from("word")
-      .update({"incorrect_count": db.raw("incorrect_count + 1"),
-        "memory_value": memory_value}
+      .update({"incorrect_count": db.raw("incorrect_count + 1")}
       )
-      .select(
-        "word.incorrect_count",
-        "word.memory_value"
+      .returning(
+        "word.correct_count",
       )
       .where("word.id", word_id);
 }
