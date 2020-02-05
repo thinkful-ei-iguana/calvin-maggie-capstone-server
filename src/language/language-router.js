@@ -47,7 +47,7 @@ languageRouter
 languageRouter
   .get("/head", async (req, res, next) => {
   try {
-    console.log('req.language.id', req.language)
+    // console.log('req.language.id', req.language)
     const wordData = await LanguageService.getWord(
       req.app.get("db"),
       req.language.id
@@ -60,7 +60,7 @@ languageRouter
       incorrectCount: wordData[0].incorrect_count,
       totalScore: wordData[0].total_score
     }
-    console.log('worddsta', dataResponse);
+    // console.log('worddsta', dataResponse);
     res.send(dataResponse);
   } catch (error) {
     next(error);
@@ -68,21 +68,44 @@ languageRouter
 });
 
 languageRouter
-  .post("/guess", async (req, res, next) => {
+  .post("/guess", jsonParser, async (req, res, next) => {
   try {
-    console.log('req is', req.query.q); // sucessfully getting the query!
-
-    
-    // const words = await LanguageService.getLanguageWords(
-    //   req.app.get("db"),
-    //   req.query.q
-    // );
-
-    // if()
-    res.send({
-      language: req.language,
-      words
-    });
+    console.log('req.body is', req.body); 
+    // sucessfully getting the query!
+    // let guess = req.query.q;
+    let {guess, currentWord} = req.body;
+    let guessData = {guess, currentWord}
+    let correctTranslation = await LanguageService.getResults(
+      req.app.get("db"),
+      guessData.currentWord
+    )
+    if(guess.toLowerCase() === correctTranslation[0].translation.toLowerCase()) {
+      console.log('a correct translation');
+    // console.log('correct userid is', correctTranslation[0].user_id);
+      let updatedScore = LanguageService.updateCorrectCount(
+        req.app.get("db"),
+        correctTranslation[0].user_id
+      );
+      let updatedCorrect = updatedScore.and._single.update.correct_count;
+      let updatedTotal = updatedScore.and._single.update.correct_count;
+      res.send({
+        isCorrect: true,
+        correctCount: updatedCorrect,
+        totalScore: updatedTotal
+      })
+    }
+    else {
+      console.log('not a correct translation');
+      let updatedScore = LanguageService.updateIncorrectCount(
+        req.app.get("db"),
+        correctTranslation[0].user_id
+      );
+      let updatedIncorrect = updatedScore.and._single.update.incorrect_count;
+      res.send({
+        isCorrect: false,
+        incorrectCount: updatedIncorrect
+      })
+    }
   } catch (error) {
     next(error);
   }
