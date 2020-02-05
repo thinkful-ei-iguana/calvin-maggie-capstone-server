@@ -63,28 +63,39 @@ const LanguageService = {
         )
       .where("word.original", currentWord)
   },
+
+  // getTotalScore(db,) {
+
+  // },
+  updateTotalScore(db, language_id, newTotal) {
+    return db
+      .from("language")
+      .where("language.id", language_id)
+      .update({total_score: newTotal})
+  },
+
   updateCorrectCount(db, word_id, memory_value) {
     return db
       .from("word")
       .join("language", {"language.id": "word.language_id"})
-      .update({"correct_count": 1,
-        "total_score": 1,
+      .update({"correct_count": db.raw("correct_count + 1"),
         "memory_value": memory_value}
       )
       .select(
         "word.correct_count",
-        "language.total_score"
+        "word.memory_value"
       )
       .where("word.id", word_id);
 },
-  updateIncorrectCount(db, word_id) {
+  updateIncorrectCount(db, word_id, memory_value) {
     return db
       .from("word")
-      .update({"incorrect_count": 1,
+      .update({"incorrect_count": db.raw("incorrect_count + 1"),
         "memory_value": memory_value}
       )
       .select(
-        "word.incorrect_count"
+        "word.incorrect_count",
+        "word.memory_value"
       )
       .where("word.id", word_id);
 }
