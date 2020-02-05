@@ -1,6 +1,7 @@
 const express = require("express");
 const LanguageService = require("./language-service");
 const { requireAuth } = require("../middleware/jwt-auth");
+const LinkedList = require("./linked-list");
 
 const languageRouter = express.Router();
 const jsonParser = express.json();
@@ -47,7 +48,7 @@ languageRouter
 languageRouter
   .get("/head", async (req, res, next) => {
   try {
-    console.log('req.language.id', req.language)
+    // console.log('req.language.id', req.language)
     const wordData = await LanguageService.getWord(
       req.app.get("db"),
       req.language.id
@@ -60,29 +61,78 @@ languageRouter
       incorrectCount: wordData[0].incorrect_count,
       totalScore: wordData[0].total_score
     }
-    console.log('worddsta', dataResponse);
+    // console.log('worddsta', dataResponse);
     res.send(dataResponse);
   } catch (error) {
     next(error);
   }
 });
 
+
 languageRouter
-  .post("/guess", async (req, res, next) => {
+  .post("/guess", jsonParser, async (req, res, next) => {
   try {
-    console.log('req is', req.query.q); // sucessfully getting the query!
 
+    let userProgressLL = new LinkedList();
+    const wordData = await LanguageService.getLanguageWords(
+      req.app.get("db"),
+      req.language.id
+    );
+    wordData.map(word => {userProgressLL.insertLast(word)})
+    userProgressLL.displayList(userProgressLL)
     
-    // const words = await LanguageService.getLanguageWords(
-    //   req.app.get("db"),
-    //   req.query.q
-    // );
+    console.log(userProgressLL.head.value.translation);
+  
+    let {guess, currentWord} = req.body;
+    let guessData = {guess, currentWord}
+    // let {translation, memory_value} = userProgressLL.head
+    let correctTranslation = await LanguageService.getResults(
+      req.app.get("db"),
+      guessData.currentWord
+    )
+    
+    if(guess.toLowerCase() === userProgressLL.head.value.translation.toLowerCase()) {
+      console.log('a correct translation');
+    // console.log('correct userid is', correctTranslation[0].user_id);
+      let newTotal = req.language.total_score + 1;
+      let updatedTotalScore = await LanguageService.updateTotalScore(
+        req.app.get("db"),
+        req.language.id,
+        newTotal
+      )
+      console.log('newtotal is',newTotal)
 
-    // if()
-    res.send({
-      language: req.language,
-      words
-    });
+      let updatedCorrect = await LanguageService.updateCorrectCount(
+        req.app.get("db"),
+        userProgressLL.head.value.id,
+        userProgressLL.head.value.memory_value,
+      );
+            console.log('updated correct is', updatedCorrect);
+
+      // let updatedMemVal = updatedScore
+      res.send({
+        isCorrect: true,
+        correctCount: updatedCorrect,
+        totalScore: newTotal
+      })
+    }
+    else {
+      console.log('not a correct translation');
+      let updatedScore = await LanguageService.updateIncorrectCount(
+        req.app.get("db"),
+        userProgressLL.head.value.id,
+        userProgressLL.head.value.memory_value
+
+      );
+      console.log('updated incorrect is', updatedScore);
+      let updatedIncorrect = updatedScore
+      // let updatedMemVal = updatedScore
+
+      res.send({
+        isCorrect: false,
+        incorrectCount: updatedIncorrect
+      })
+    }
   } catch (error) {
     next(error);
   }

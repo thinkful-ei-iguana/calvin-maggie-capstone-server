@@ -133,7 +133,7 @@ class LinkedList {
           currNode = currNode.next;
       }
     }
-    
+
     size(lst) {
       let counter = 0;
       let currNode = lst.head;
@@ -149,3 +149,6 @@ class LinkedList {
       return counter;
     }
 }
+
+
+module.exports = LinkedList;
