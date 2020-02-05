@@ -24,11 +24,11 @@ VALUES
   (1, 1, 'Kia ora', 'Hello', 2),
   (2, 1, 'Aotearoa', 'New Zealand', 3),
   (3, 1, 'whanau', 'family', 4),
-  (4, 1, 'hui', 'gathering or meeting', 5),
+  (4, 1, 'hui', 'meeting', 5),
   (5, 1, 'iwi', 'tribe', 6),
-  (6, 1, 'mahi', 'work or activity', 7),
+  (6, 1, 'mahi', 'activity', 7),
   (7, 1, 'aroha', 'love', 8),
-  (8, 1, 'mana', 'prestige or reputation', null);
+  (8, 1, 'mana', 'reputation', null);
 
 UPDATE "language" SET head = 1 WHERE id = 1;
 
