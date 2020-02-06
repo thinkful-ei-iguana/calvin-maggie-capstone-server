@@ -1,52 +1,24 @@
-# Spaced repetition API!
+# Maori in Motion
+Spaced Repetition Capstone, built by Calvin Rosehart and Maggie McClellan
 
-## Local dev setup
 
-If using user `dunder_mifflin`:
 
-```bash
-mv example.env .env
-createdb -U dunder_mifflin spaced_repetition
-createdb -U dunder_mifflin spaced_repetition_test
-```
+## Visit Maori in Motion
+[Live app](**(url here)** "Maori in Motion")
 
-If your `dunder_mifflin` user has a password be sure to set it in `.env` for all appropriate fields. Or if using a different user, update appropriately.
+[GitHub repository (client)](https://github.com/thinkful-ei-iguana/calvin-maggie-capstone-client "Maori in Motion server repo")
 
-```bash
-npm install
-npm run migrate
-env MIGRATION_DB_NAME=spaced_repetition_test npm run migrate
-```
+## Technology used
 
-And `npm test` should work at this point
+**Front-End:** *ReactJS | CSS*
 
-## Configuring Postgres
+**Back-End:** *NodeJS | ExpressJS*
 
-For tests involving time to run properly, configure your Postgres database to run in the UTC timezone.
+**Testing:** *Mocha | Chai*
 
-1. Locate the `postgresql.conf` file for your Postgres installation.
-   1. E.g. for an OS X, Homebrew install: `/usr/local/var/postgres/postgresql.conf`
-   2. E.g. on Windows, _maybe_: `C:\Program Files\PostgreSQL\11.2\data\postgresql.conf`
-   3. E.g  on Ubuntu 18.04 probably: '/etc/postgresql/10/main/postgresql.conf'
-2. Find the `timezone` line and set it to `UTC`:
 
-```conf
-# - Locale and Formatting -
-
-datestyle = 'iso, mdy'
-#intervalstyle = 'postgres'
-timezone = 'UTC'
-#timezone_abbreviations = 'Default'     # Select the set of available time zone
-```
-
-## Scripts
-
-Start the application `npm start`
-
-Start nodemon for the application `npm run dev`
-
-Run the tests mode `npm test`
-
-Run the migrations up `npm run migrate`
-
-Run the migrations down `npm run migrate -- 0`
+| **HTTP Verb** | **Path**                           | **Used for**         |
+| --------- |:--------------------------------------:| --------------------:|
+| GET       | / | user dashboard, displays overview of all words and scores    |
+| GET       | /head  | initiates the word-learning tool of the app    |
+| POST | /guess  | displays feedback on correct or incorrect answers  |

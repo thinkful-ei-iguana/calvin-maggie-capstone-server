@@ -1,7 +1,7 @@
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 
-describe.skip("Language Endpoints", function () {
+describe.only("Language Endpoints", function () {
   let db;
 
   const testUsers = helpers.makeUsersArray();
@@ -135,10 +135,10 @@ describe.skip("Language Endpoints", function () {
         .set("Authorization", helpers.makeAuthHeader(testUser))
         .expect(200)
         .expect({
-          nextWord: "Testnextword",
-          totalScore: 999,
-          wordCorrectCount: 222,
-          wordIncorrectCount: 333
+          nextWord: "original 1",
+          totalScore: 0,
+          wordCorrectCount: 0,
+          wordIncorrectCount: 0
         });
     });
   });
@@ -146,7 +146,7 @@ describe.skip("Language Endpoints", function () {
   /**
    * @description Submit a new guess for the language
    **/
-  describe.only(`POST /api/language/guess`, () => {
+  describe(`POST /api/language/guess`, () => {
     const [testLanguage] = testLanguages;
     const testLanguagesWords = testWords.filter(
       w => w.language_id === testLanguage.id
@@ -190,7 +190,7 @@ describe.skip("Language Endpoints", function () {
             nextWord: testLanguagesWords[1].original,
             totalScore: 0,
             wordCorrectCount: 0,
-            wordIncorrectCount: 0,
+            wordIncorrectCount: 1,
             answer: testLanguagesWords[0].translation,
             isCorrect: false
           });
@@ -234,7 +234,7 @@ describe.skip("Language Endpoints", function () {
           .expect({
             nextWord: testLanguagesWords[1].original,
             totalScore: 1,
-            wordCorrectCount: 0,
+            wordCorrectCount: 1,
             wordIncorrectCount: 0,
             answer: testLanguagesWords[0].translation,
             isCorrect: true
@@ -260,7 +260,7 @@ describe.skip("Language Endpoints", function () {
           .expect({
             nextWord: testLanguagesWords[2].original,
             totalScore: 2,
-            wordCorrectCount: 0,
+            wordCorrectCount: 1,
             wordIncorrectCount: 0,
             answer: testLanguagesWords[1].translation,
             isCorrect: true

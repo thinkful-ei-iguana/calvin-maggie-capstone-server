@@ -57,6 +57,7 @@ languageRouter
         req.app.get("db"),
         req.language.id
       );
+      console.log('req.language is', req.language);
 
       res.json({
         language: req.language,
@@ -75,7 +76,7 @@ languageRouter
     try {
 
       let wordsLL = await createLinkedListFromDB(req);
-      console.log('nextword is', wordsLL.head.value.original);
+      console.log('correct_count is', wordsLL.head.value.correct_count);
 
       let getTotalScore = await LanguageService.getTotalScore(
         req.app.get("db"),
@@ -117,8 +118,8 @@ languageRouter
       );
 
       console.log('gettotalscore is', getTotalScore);
-      let memVal = 1;
       let isCorrect = false;
+      let memVal = 1;
       let currentHead = wordsLL.head.value;
       console.log(`compare '${guess.toLowerCase()}' to '${currentHead.translation.toLowerCase()}'`)
       if (guess.toLowerCase() === currentHead.translation.toLowerCase()) {
@@ -172,17 +173,18 @@ languageRouter
       console.log('reordered linked list');
       wordsLL.displayList();
 
-      res.send({
-        nextWord: wordsLL.head.value,
-        wordCorrectCount: getCorrectCount,
-        wordInCorrectCount: getIncorrectCount,
-        totalScore: getTotalScore.total_score,
-        answer: correctTranslation,
-        isCorrect: isCorrect,
-      })
+      console.log('get incorrectcount', getIncorrectCount);
+      res
+        .status(200)
+        .send({
+          nextWord: wordsLL.head.value.original,
+          wordCorrectCount: getCorrectCount,
+          wordIncorrectCount: getIncorrectCount,
+          totalScore: getTotalScore.total_score,
+          answer: correctTranslation,
+          isCorrect: isCorrect,
+        })
     }
-
-
 
     catch (error) {
       next(error);
