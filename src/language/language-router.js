@@ -76,19 +76,18 @@ languageRouter
 
       let wordsLL = await createLinkedListFromDB(req);
       console.log('nextword is', wordsLL.head.value.original);
+
+      let getTotalScore = await LanguageService.getTotalScore(
+        req.app.get("db"),
+        req.language.id
+      );
+      console.log('gettotalscorehere is', getTotalScore.total_score);
       const dataResponse = {
         nextWord: wordsLL.head.value.original,
-        totalScore: 999,
-        wordCorrectCount: 222,
-        wordIncorrectCount: 333
+        totalScore: getTotalScore.total_score,
+        wordCorrectCount: wordsLL.head.value.correct_count,
+        wordIncorrectCount: wordsLL.head.value.incorrect_count
       }
-
-      // const dataResponse = {
-      //   nextWord: "Testnextword",
-      //   totalScore: 999,
-      //   wordCorrectCount: 222,
-      //   wordIncorrectCount: 333
-      // }
 
       res.send(dataResponse);
     } catch (error) {
