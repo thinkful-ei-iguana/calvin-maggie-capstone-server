@@ -58,7 +58,7 @@ const UserService = {
         .first()
 
       const languageWords = [
-        ['Kia ora', 'Hello', 2],
+        ['Kia ora', 'hello', 2],
         ['Aotearoa', 'New Zealand', 3],
         ['whanau', 'family', 4],
         ['hui', 'meeting', 5],

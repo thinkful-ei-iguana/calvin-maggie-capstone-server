@@ -21,7 +21,7 @@ VALUES
 
 INSERT INTO "word" ("id", "language_id", "original", "translation", "next")
 VALUES
-  (1, 1, 'Kia ora', 'Hello', 2),
+  (1, 1, 'Kia ora', 'hello', 2),
   (2, 1, 'Aotearoa', 'New Zealand', 3),
   (3, 1, 'whanau', 'family', 4),
   (4, 1, 'hui', 'meeting', 5),

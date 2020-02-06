@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 
-describe("User Endpoints", function() {
+describe("User Endpoints", function () {
   let db;
 
   const testUsers = helpers.makeUsersArray();
@@ -181,7 +181,7 @@ describe("User Endpoints", function() {
           name: "Maori",
           total_score: 0,
           words: [
-            { original: "Kia ora", translation: "Hello" },
+            { original: "Kia ora", translation: "hello" },
             { original: "Aotearoa", translation: "New Zealand" },
             { original: "whanau", translation: "family" },
             { original: "hui", translation: "meeting" },
