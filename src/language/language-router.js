@@ -143,13 +143,15 @@ languageRouter
       }
 
       let correctTranslation = currentHead.translation;
-      let getCorrectCount = currentHead.correct_count;
-      let getIncorrectCount = currentHead.incorrect_count;
       currentHead.memory_value = memVal;
 
 
       wordsLL.remove(currentHead);
       wordsLL.insertAt(memVal, currentHead);
+
+      // currentHead= wordsLL.head.value;
+      // let getCorrectCount = currentHead.correct_count;
+      // let getIncorrectCount = currentHead.incorrect_count;
 
       let preceedingNode = wordsLL.findNthElement(memVal - 1);
       preceedingNode.value.next = preceedingNode.next.value.id;
@@ -173,13 +175,13 @@ languageRouter
       console.log('reordered linked list');
       wordsLL.displayList();
 
-      console.log('get incorrectcount', getIncorrectCount);
+      // console.log('get incorrectcount', getIncorrectCount);
       res
         .status(200)
         .send({
           nextWord: wordsLL.head.value.original,
-          wordCorrectCount: getCorrectCount,
-          wordIncorrectCount: getIncorrectCount,
+          wordCorrectCount: wordsLL.head.value.correct_count,
+          wordIncorrectCount: wordsLL.head.value.incorrect_count,
           totalScore: getTotalScore.total_score,
           answer: correctTranslation,
           isCorrect: isCorrect,
