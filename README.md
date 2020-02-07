@@ -15,9 +15,9 @@ Beyond the dashboard, users encounter one word at a time, flashcard-style. Upon 
 
 ## Technology used
 
-**Front-End:** *ReactJS | HTML | CSS *
+**Front-End:** *ReactJS | HTML | CSS*
 
-**Back-End:** *NodeJS | Express | PostgresQL*
+**Back-End:** *NodeJS | Express | PostgreSQL*
 
 **Testing:** *Mocha | Chai | Cypress*
 
@@ -31,4 +31,4 @@ Beyond the dashboard, users encounter one word at a time, flashcard-style. Upon 
 
 ## Screenshots
 
-![Image - spaced repetition dashboard]()
+![Image - spaced repetition dashboard](https://i.gyazo.com/f25d98350604971cfa2d53f8ab840e05.png)
