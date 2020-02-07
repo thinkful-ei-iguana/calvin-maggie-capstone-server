@@ -114,18 +114,18 @@ const LanguageService = {
       )
       .where('word.id', word_id);
   },
-  updateTotalScore(db, language_id, newTotal) {
-    return db
-      .from('language')
-      .where('language.id', language_id)
-      .update({ total_score: newTotal });
-  },
   updateMemoryValue(db, word_id, new_mem_val) {
     return db
       .from('word')
       .update({ memory_value: new_mem_val })
       .where('word.id', word_id)
       .returning('memory_value');
+  },
+  updateTotalScore(db, language_id, newTotal) {
+    return db
+      .from('language')
+      .where('language.id', language_id)
+      .update({ total_score: newTotal });
   },
   updateWordStats(db, wordObj) {
     return db
