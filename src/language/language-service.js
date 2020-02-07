@@ -99,7 +99,6 @@ const LanguageService = {
   },
 
   updateTotalScore(db, language_id, newTotal) {
-    console.log('updatetotalscore service');
     return db
       .from('language')
       .where('language.id', language_id)
@@ -107,7 +106,6 @@ const LanguageService = {
   },
 
   updateMemoryValue(db, word_id, new_mem_val) {
-    console.log('service word_id and memory value', word_id, new_mem_val);
     return db
       .from('word')
       .update({ memory_value: new_mem_val })
